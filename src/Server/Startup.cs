@@ -25,13 +25,7 @@ namespace Server
         }
 
         public void ConfigureServices(IServiceCollection services)
-        {
-            
-            services.AddHttpsRedirection(options =>
-            {
-                options.HttpsPort = 443; // Of een andere poort als je HTTPS op een andere poort draait
-            });        
-            
+        {           
             services.AddDbContext<SportStoreDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
