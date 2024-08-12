@@ -1,12 +1,12 @@
 pipeline {
-        agent any
+    agent any
     
-        environment {
-            CONTAINER_NAME = 'dotnet6-container'
-            PROJECT_PATH = 'src/Server/Server.csproj'
-            TEST_PATH = 'tests/Domain.Tests/Domain.Tests.csproj'
-            PUBLISH_PATH = 'publish'
-        }
+    environment {
+        CONTAINER_NAME = 'dotnet6-container'
+        PROJECT_PATH = 'src/Server/Server.csproj'
+        TEST_PATH = 'tests/Domain.Tests/Domain.Tests.csproj'
+        PUBLISH_PATH = 'publish'
+    }
     
     stages {
         
@@ -19,7 +19,6 @@ pipeline {
         stage('Clone repo') {
             steps {
                 sh 'git clone --branch main https://github.com/ThomasDeSchepper26/p3ops-demo-app.git'                
-                
             }
         }
        
@@ -29,13 +28,21 @@ pipeline {
                     sh 'docker cp p3ops-demo-app dotnet6-container:'
                 }
             }
-        } 
+        }
         
         stage('Restore Dependencies') {
             steps {
                 echo 'Restoring .NET dependencies...'
                 sh 'docker exec ${CONTAINER_NAME} bash -c "dotnet restore ${PROJECT_PATH}"'
                 sh 'docker exec ${CONTAINER_NAME} bash -c "dotnet restore ${TEST_PATH}"'
+            }
+        }
+
+        stage('Lint Project') {
+            steps {
+                echo 'Linting .NET project...'
+                sh 'docker exec ${CONTAINER_NAME} bash -c "dotnet tool install -g dotnet-format || true"'
+                sh 'docker exec ${CONTAINER_NAME} bash -c "~/.dotnet/tools/dotnet-format ${PROJECT_PATH}"'
             }
         }
 
