@@ -81,13 +81,14 @@ namespace Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseHttpMetrics();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
                 endpoints.MapFallbackToFile("index.html");
             });
         }
